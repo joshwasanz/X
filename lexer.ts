@@ -92,7 +92,7 @@ export function tokenize(sourceCode: string): Token[] {
 }
 
 
-const source = await Deno.readTextFile("./hello.x");
+const source = await Deno.readTextFile("./main.x");
 for (const token of tokenize(source)){
   console.log(token);
 }
