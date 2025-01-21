@@ -8,7 +8,7 @@ function X(){
     console.log("\nX v0.1");
 
     while(true){
-        const input = prompt("> ");
+        const input = prompt("-> ");
         // check for no user input or exit keyword
         if(!input || input.includes("exit")){
             Deno.exit(1);
