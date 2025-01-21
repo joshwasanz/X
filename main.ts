@@ -15,8 +15,6 @@ function X(){
         }
 
         const program = parser.productAST(input!);
-        console.log(program);
-        
-    }
-    
+        console.log(program);   
+    }   
 }
