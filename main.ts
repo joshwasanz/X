@@ -21,7 +21,6 @@ function X(){
         const result = evaluate(program);
         console.log(result);
 
-        console.log("_________\n\n\n");
         
         
     }   
