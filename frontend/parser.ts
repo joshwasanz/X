@@ -17,6 +17,15 @@ export default class Parser {
         return prev;
     }
 
+    private expect(type:TokenType, err){
+        const prev = this.tokens.shift() as Token;
+        if(!prev || prev.type != type){
+            console.error("Parser Error:\n",err,prev,"-Expecting:",type);
+            Deno.exit(1)
+        }
+        return prev
+    }
+
     public productAST(sourceCode:string): Program {
         this.tokens = tokenize(sourceCode)
         const program:Program = {
@@ -97,6 +106,11 @@ export default class Parser {
                 return {kind:"NumericLiteral",value:parseFloat(this.eat().value)
                 } as NumericLiteral
 
+            case TokenType.OpenParen:
+                this.eat(); // eat the opening paren
+                const value = this.parse_expr();
+                this.expect(TokenType.CloseParen,"Unexpected token found inside parenthesised expression. Expected closing parenthesis");
+                return value; // eat the closing paren
             default:
                 console.error("Unexpected token found during parsing",this.at());
                 Deno.exit(1);
