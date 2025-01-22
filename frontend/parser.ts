@@ -1,4 +1,4 @@
-import { Stmt,Program,Expr,BinaryExpr,NumericLiteral,Identifier } from "../frontend/ast.ts";
+import { Stmt,Program,Expr,BinaryExpr,NumericLiteral,Identifier, VarDeclaration } from "../frontend/ast.ts";
 import {tokenize, Token, TokenType} from "../frontend/lexer.ts";
 
 export default class Parser {
@@ -43,7 +43,41 @@ export default class Parser {
 
     private parse_stmt():Stmt{
         // skip to parse expr
-        return this.parse_expr();
+        switch(this.at().type){
+            case TokenType.Let:
+            case TokenType.Const:
+                return this.parse_var_declaration()
+            default:
+                return this.parse_expr()
+        }
+        
+    }
+
+    parse_var_declaration():Stmt{
+        const isConstant = this.eat().type == TokenType.Const;
+        const identifier = this.expect(
+            TokenType.Identifier,
+            "Expected identifier name following let | const keywords.",
+        ).value;
+
+        if(this.at().type == TokenType.Semicolon){
+            this.eat()
+            if(isConstant){
+                throw "Must assign value to contant expression. No value provided";
+            }
+            return {kind:"VarDeclaration",identifier,constant:false,value:undefined} as VarDeclaration
+        }
+
+        this.expect(TokenType.Equals,"Expected equals token following identifier in var declaration");
+        const declaration = {
+            kind:"VarDeclaration",
+            value:this.parse_expr(),
+            identifier,
+            constant:isConstant
+        } as VarDeclaration
+
+        this.expect(TokenType.Semicolon,"Add the mothafucking semi colon");
+        return declaration
     }
 
     private parse_expr():Expr{
