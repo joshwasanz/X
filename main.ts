@@ -1,7 +1,7 @@
 import Parser from "./frontend/parser.ts"
 import Environment from "./runtime/environment.ts";
 import { evaluate } from "./runtime/interpreter.ts";
-import { NumberVal } from "./runtime/values.ts";
+import { MK_NULL, MK_NUMBER, MK_BOOL } from "./runtime/values.ts";
 
 X();
 
@@ -9,7 +9,11 @@ X();
 function X(){
     const parser = new Parser();
     const env = new Environment();
-    env.declareVar("x", { value: 100, type: "number" } as NumberVal);
+    env.declareVar("x", MK_NUMBER(100));
+    env.declareVar("true",MK_BOOL(true));
+    env.declareVar("false",MK_BOOL(true));
+    env.declareVar("null",MK_NULL());
+
     console.log("\nX v0.1");
 
     while(true){
