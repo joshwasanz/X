@@ -4,9 +4,9 @@
 
 
 export enum TokenType {
-  Null,
   Number,
   Identifier,
+  String,
   Let,
   Equals,
   OpenParen,
@@ -18,7 +18,6 @@ export enum TokenType {
 
 const KEYWORDS : Record<string, TokenType> = {
   let : TokenType.Let,
-  null: TokenType.Null
 }
 
 export interface Token {

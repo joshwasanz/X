@@ -54,10 +54,6 @@ export function evaluate(astNode: Stmt,env:Environment): RuntimeVal {
                 value:((astNode as NumericLiteral).value),
                 type:"number",
             } as NumberVal;
-
-        case "NullLiteral":
-            return MK_NULL()
-
         case "Identifier":
             return eval_identifier(astNode as Identifier,env)
 
