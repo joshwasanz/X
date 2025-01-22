@@ -1,11 +1,12 @@
 import {ValueType, RuntimeVal, NumberVal, NullVal} from "./values.ts"
-import { BinaryExpr, NodeType, NumericLiteral, Program, Stmt } from "../frontend/ast.ts"
+import { BinaryExpr, Identifier, NodeType, NumericLiteral, Program, Stmt } from "../frontend/ast.ts"
+import {Environment} from './environment.ts'
 
-function eval_program(program:Program):RuntimeVal{
+function eval_program(program:Program,env:Environment):RuntimeVal{
     let lastEvaluated:RuntimeVal = { type:"null",value:"null"} as NullVal
 
     for (const statement of program.body){
-        lastEvaluated = evaluate(statement);
+        lastEvaluated = evaluate(statement,env);
     }
 
     return lastEvaluated;
@@ -29,9 +30,9 @@ function eval_numeric_binary_expr(lhs:NumberVal,rhs:NumberVal,operator:string):N
     return {value:result,type:"number"}
 }
 
-function eval_binary_expr(binop:BinaryExpr):RuntimeVal{
-    const lhs = evaluate(binop.left);
-    const rhs = evaluate(binop.right)
+function eval_binary_expr(binop:BinaryExpr,env:Environment):RuntimeVal{
+    const lhs = evaluate(binop.left,env);
+    const rhs = evaluate(binop.right,env)
 
     if (lhs.type == "number" && rhs.type == "number") {
         return eval_numeric_binary_expr(lhs as NumberVal, rhs as NumberVal,binop.operator)
@@ -40,7 +41,12 @@ function eval_binary_expr(binop:BinaryExpr):RuntimeVal{
     return {type:'null',value:"null"} as NullVal
 }
 
-export function evaluate(astNode: Stmt): RuntimeVal {
+    function eval_identifier(ident:Identifier,env:Environment):RuntimeVal{
+        const val = env.lookupVar(ident.symbol)
+        return val;
+    }
+
+export function evaluate(astNode: Stmt,env:Environment): RuntimeVal {
 
     switch(astNode.kind){
         case "NumericLiteral":
@@ -52,11 +58,14 @@ export function evaluate(astNode: Stmt): RuntimeVal {
         case "NullLiteral":
             return {value:"null",type:"null"} as NullVal;
 
+        case "Identifier":
+            return eval_identifier(astNode as Identifier,env)
+
         case "BinaryExpr":
-            return eval_binary_expr(astNode as BinaryExpr);
+            return eval_binary_expr(astNode as BinaryExpr,env);
 
         case "Program":
-            return eval_program(astNode as Program);
+            return eval_program(astNode as Program,env);
 
 
             default:
