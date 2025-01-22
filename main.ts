@@ -9,12 +9,12 @@ X();
 function X(){
     const parser = new Parser();
     const env = new Environment();
-    env.declareVar("x", MK_NUMBER(100));
-    env.declareVar("true",MK_BOOL(true));
-    env.declareVar("false",MK_BOOL(true));
-    env.declareVar("null",MK_NULL());
+    env.declareVar("sample", MK_NUMBER(10),true);
+    env.declareVar("true",MK_BOOL(true),true);
+    env.declareVar("false",MK_BOOL(true),true);
+    env.declareVar("null",MK_NULL(),true);
 
-    console.log("\nX v0.1");
+    console.log("\nX🔥 v0.1");
 
     while(true){
         const input = prompt("-> ");
@@ -26,7 +26,7 @@ function X(){
         const program = parser.productAST(input!);
         
         const result = evaluate(program,env);
-        console.log(result);
+        console.log(result['value']);
 
         
         

@@ -26,7 +26,7 @@ export function evaluate(astNode: Stmt,env:Environment): RuntimeVal {
             return eval_var_declaration(astNode as VarDeclaration,env)
 
             default:
-                console.error("thid AST Node has not yet been setup for interpretation",astNode);
+                console.error("this AST Node has not yet been setup for interpretation",astNode);
                 Deno.exit(1);
                 return MK_NULL()
 
