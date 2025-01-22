@@ -5,7 +5,6 @@ import { MK_NULL, MK_NUMBER, MK_BOOL } from "./runtime/values.ts";
 
 X();
 
-
 function X(){
     const parser = new Parser();
     const env = new Environment();
