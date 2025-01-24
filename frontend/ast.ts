@@ -7,7 +7,9 @@ export type NodeType =
   | "BinaryExpr"        // Binary expression (e.g., a + b, x * y)
   | "CallExpr"          // Function call expression (e.g., foo(1, 2))
   | "UnaryExpr"         // Unary expression (e.g., -x, !flag)
-  | "FunctionDeclaration"; // Function declaration (e.g., function foo() {})
+  | "FunctionDeclaration" // Function declaration (e.g., function foo() {})
+  | "Property"
+  | "ObjectLiteral";
 
 
 // Base interface for all AST nodes
@@ -58,3 +60,16 @@ export interface NumericLiteral extends Expr{
     kind:"NumericLiteral";
     value:number;       // The numeric value
 }
+
+export interface Property extends Expr{
+    kind:"Property";
+    key: string;
+    value?: Expr;   
+}
+
+
+export interface ObjectLiteral extends Expr{
+    kind:"ObjectLiteral";
+    properties:Property[]      
+}
+

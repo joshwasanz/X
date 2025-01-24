@@ -1,10 +1,18 @@
-import {RuntimeVal} from './values.ts';
+import {MK_BOOL, MK_NULL, RuntimeVal} from './values.ts';
 
 
 /**
  * Represents an environment for variable storage and resolution.
  * Each environment has a scope and can have a parent environment to form a chain of scopes.
  */
+
+function setupScope(env:Environment){
+    
+    env.declareVar("true",MK_BOOL(true),true);
+    env.declareVar("false",MK_BOOL(false),true);
+    env.declareVar("null",MK_NULL(),true);
+
+}
 
 export default class Environment{
 
@@ -20,9 +28,14 @@ export default class Environment{
      */
 
     constructor(parentEnv?:Environment){
+        const global = parentEnv? true : false;
         this.parent = parentEnv;
         this.variables = new Map();
         this.constants = new Set();
+
+        if(global){
+            setupScope(this);
+        }
     }
 
 

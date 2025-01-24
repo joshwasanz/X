@@ -3,15 +3,24 @@ import Environment from "./runtime/environment.ts";
 import { evaluate } from "./runtime/interpreter.ts";
 import { MK_NULL, MK_NUMBER, MK_BOOL } from "./runtime/values.ts";
 
-X();
+// X();
+run("./main.x")
+
+
+async function run(filename:string){
+    const parser = new Parser();
+    const env = new Environment();
+
+    const input = await Deno.readTextFile(filename);
+    const program = parser.productAST(input);
+    const result = evaluate(program,env);
+    console.log(result);
+}
+
 
 function X(){
     const parser = new Parser();
     const env = new Environment();
-    env.declareVar("sample", MK_NUMBER(10),true);
-    env.declareVar("true",MK_BOOL(true),true);
-    env.declareVar("false",MK_BOOL(true),true);
-    env.declareVar("null",MK_NULL(),true);
 
     console.log("\nX🔥 v0.1");
 
