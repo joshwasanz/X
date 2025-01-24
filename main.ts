@@ -1,5 +1,5 @@
 import Parser from "./frontend/parser.ts"
-import Environment from "./runtime/environment.ts";
+import Environment, { createGlobalEnv } from "./runtime/environment.ts";
 import { evaluate } from "./runtime/interpreter.ts";
 import { MK_NULL, MK_NUMBER, MK_BOOL } from "./runtime/values.ts";
 
@@ -9,7 +9,7 @@ run("./main.x")
 
 async function run(filename:string){
     const parser = new Parser();
-    const env = new Environment();
+    const env = createGlobalEnv();
 
     const input = await Deno.readTextFile(filename);
     const program = parser.productAST(input);
@@ -20,7 +20,8 @@ async function run(filename:string){
 
 function X(){
     const parser = new Parser();
-    const env = new Environment();
+    const env = createGlobalEnv();
+
 
     console.log("\nX🔥 v0.1");
 
