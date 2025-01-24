@@ -1,6 +1,6 @@
 import { RuntimeVal, NumberVal, MK_NULL} from "./values.ts"
 import { AssignmentExpr, BinaryExpr, Identifier,  NumericLiteral, ObjectLiteral, Program, Stmt, VarDeclaration } from "../frontend/ast.ts"
-import {Environment} from './environment.ts'
+import Environment from './environment.ts'
 import { eval_identifier, eval_binary_expr, eval_assignment, eval_object_expr } from "./eval/expressions.ts";
 import { eval_program, eval_var_declaration } from "./eval/statements.ts";
 
