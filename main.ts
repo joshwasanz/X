@@ -1,10 +1,10 @@
 import Parser from "./frontend/parser.ts"
-import Environment, { createGlobalEnv } from "./runtime/environment.ts";
+import { createGlobalEnv } from "./runtime/environment.ts";
 import { evaluate } from "./runtime/interpreter.ts";
-import { MK_NULL, MK_NUMBER, MK_BOOL } from "./runtime/values.ts";
 
-// X();
-run("./main.x")
+
+X();
+// run("./main.x")
 
 
 async function run(filename:string){
