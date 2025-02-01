@@ -73,11 +73,12 @@ export default class Parser {
             if(isConstant){
                 throw "Must assign value to contant expression. No value provided";
             }
-            return {kind:"VarDeclaration",identifier,constant:false,value:undefined} as VarDeclaration
+            return {kind:"VarDeclaration",identifier,constant:false} as VarDeclaration
         }
 
         // Ensure an assignment is present for the variable
         this.expect(TokenType.Equals,"Expected equals token following identifier in var declaration");
+        
         const declaration = {
             kind:"VarDeclaration",
             value:this.parse_expr(),
@@ -115,7 +116,7 @@ export default class Parser {
         this.eat() //advance past open brace
         const properties = new Array<Property>();
 
-        while (this.not_eof() && this.at().type != TokenType.CloseBarce){
+        while (this.not_eof() && this.at().type != TokenType.CloseBrace){
             // {key: val, key2: val}
             const key = this.expect(TokenType.Identifier,"Object literal key expected").value;
 
@@ -125,7 +126,7 @@ export default class Parser {
                 properties.push({key, kind:"Property"} as Property);
                 continue;
             } // Allows shorthand key:pair -> { key }
-            else if(this.at().type == TokenType.CloseBarce){
+            else if(this.at().type == TokenType.CloseBrace){
                 properties.push({key, kind:"Property"});
                 continue;
             }
@@ -135,11 +136,11 @@ export default class Parser {
             const value = this.parse_expr();
 
             properties.push({kind:"Property",value,key});
-            if(this.at().type != TokenType.CloseBarce){
+            if(this.at().type != TokenType.CloseBrace){
                 this.expect(TokenType.Comma,"Expected comma or Closing Bracket following Property");
             }
         }
-        this.expect(TokenType.CloseBarce, "Object literal missing closing brace.");
+        this.expect(TokenType.CloseBrace, "Object literal missing closing brace.");
         return { kind: "ObjectLiteral", properties } as ObjectLiteral;
     }
 

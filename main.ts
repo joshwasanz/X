@@ -3,8 +3,8 @@ import { createGlobalEnv } from "./runtime/environment.ts";
 import { evaluate } from "./runtime/interpreter.ts";
 
 
-X();
-// run("./main.x")
+// X();
+run("./main.x")
 
 
 async function run(filename:string){

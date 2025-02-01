@@ -67,6 +67,12 @@ export interface Property extends Expr{
     value?: Expr;   
 }
 
+export interface CallExpr extends Expr {
+    kind: "CallExpr";
+    args: Expr[];  // The name of the function (e.g., 'print')
+    caller: Expr; // The arguments to the function (e.g., foo, 45)
+  }
+  
 
 export interface ObjectLiteral extends Expr{
     kind:"ObjectLiteral";

@@ -1,4 +1,4 @@
-import { Identifier, Program, VarDeclaration } from "../../frontend/ast.ts";
+import {  Program, VarDeclaration } from "../../frontend/ast.ts";
 import Environment from "../environment.ts";
 import { evaluate } from "../interpreter.ts";
 import { RuntimeVal, MK_NULL } from "../values.ts";
