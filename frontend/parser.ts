@@ -1,4 +1,4 @@
-import { Stmt,Program,Expr,BinaryExpr,NumericLiteral,Identifier, VarDeclaration, AssignmentExpr, Property, ObjectLiteral } from "../frontend/ast.ts";
+import { Stmt,Program,Expr,BinaryExpr,NumericLiteral,Identifier, VarDeclaration, AssignmentExpr, Property, ObjectLiteral, CallExpr, MemberExpr } from "../frontend/ast.ts";
 import {tokenize, Token, TokenType} from "../frontend/lexer.ts";
 
 export default class Parser {
@@ -113,7 +113,7 @@ export default class Parser {
             return this.parse_additive_expr();
         }
 
-        this.eat() //advance past open brace
+        this.eat() //advance past open Brace
         const properties = new Array<Property>();
 
         while (this.not_eof() && this.at().type != TokenType.CloseBrace){
@@ -137,10 +137,10 @@ export default class Parser {
 
             properties.push({kind:"Property",value,key});
             if(this.at().type != TokenType.CloseBrace){
-                this.expect(TokenType.Comma,"Expected comma or Closing Bracket following Property");
+                this.expect(TokenType.Comma,"Expected comma or Closing Brace following Property");
             }
         }
-        this.expect(TokenType.CloseBrace, "Object literal missing closing brace.");
+        this.expect(TokenType.CloseBrace, "Object literal missing closing Brace.");
         return { kind: "ObjectLiteral", properties } as ObjectLiteral;
     }
 
@@ -164,11 +164,11 @@ export default class Parser {
 
       // Parse a multiplicative expression (e.g., `a * b`)
     private parse_multiplicative_expr() :Expr{
-        let left = this.parse_primary_expr();
+        let left = this.parse_call_member_expr();
 
         while (this.at().value == "/" || this.at().value == "*" || this.at().value == "%"){
             const operator = this.eat().value;
-            const right = this.parse_primary_expr();
+            const right = this.parse_call_member_expr();
             left = {
                 kind:"BinaryExpr",
                 left,
@@ -178,6 +178,86 @@ export default class Parser {
         }
 
         return left
+    }
+
+    // foo.x()
+    private parse_call_member_expr():Expr{
+        const member = this.parse_member_expr();
+
+        if(this.at().type == TokenType.OpenParen){
+            return this.parse_call_expr(member);
+        }
+
+        return member;
+    }
+
+    private parse_call_expr(caller:Expr):Expr{
+        let call_expr:Expr = {
+            kind:"CallExpr",
+            caller,
+            args:this.parse_args(),
+        } as CallExpr;
+
+        if(this.at().type == TokenType.OpenParen){
+            call_expr = this.parse_call_expr(call_expr)
+        }
+
+        return call_expr;
+    }
+
+    // fn add(x,y){} --> paramenters , add(x,y) --> arguments
+    private parse_args():Expr[]{
+        this.expect(TokenType.OpenParen,"EXpected open parenthesis");
+        const args = this.at().type == TokenType.CloseParen ? [] : this.parse_arguments_list()
+
+        this.expect(TokenType.CloseParen,"Missing closing parenthesis inside argument list");
+
+        return args;
+    }
+
+    private parse_arguments_list():Expr[]{
+        const args = [this.parse_assignment_expr()];
+
+        while(this.at().type == TokenType.Comma && this.eat()){
+            args.push(this.parse_assignment_expr());
+        }
+
+        return args;
+    }
+
+    private parse_member_expr():Expr{
+        let object = this.parse_primary_expr();
+
+        while(this.at().type == TokenType.Dot || this.at().type == TokenType.OpenBracket){
+            const operator = this.eat();
+
+            let property:Expr;
+            let computed:boolean;
+
+            //non computed values aka dot obj.expr
+            if(operator.type == TokenType.Dot){
+                computed = false;
+                property = this.parse_primary_expr() // get identifier
+
+                if(property.kind != "Identifier"){
+                    throw `Cannot use dot operator without right hnd side being a identifier`
+                }
+
+            }else{
+                computed = true;
+                property = this.parse_expr();
+                this.expect(TokenType.CloseBracket,"Missing closing bracket in computed value");
+            }
+
+            object = {
+                kind:"MemberExpr",
+                object,
+                property,
+                computed
+            } as MemberExpr
+        }
+
+        return object
     }
 
     // order of precidence 

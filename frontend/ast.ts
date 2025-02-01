@@ -2,6 +2,7 @@ export type NodeType =
   | "Program"           // Root node of the program
   | "VarDeclaration"    // Variable declaration (e.g., let x = 10;)
   | "AssignmentExpr"    // Assignment expression (e.g., x = 5)
+  | "MemberExpr"
   | "NumericLiteral"    // Numeric literal (e.g., 42, 3.14)
   | "Identifier"        // Identifier (e.g., variable names like x, foo)
   | "BinaryExpr"        // Binary expression (e.g., a + b, x * y)
@@ -73,6 +74,12 @@ export interface CallExpr extends Expr {
     caller: Expr; // The arguments to the function (e.g., foo, 45)
   }
   
+export interface MemberExpr extends Expr{
+    kind: "MemberExpr";
+    object:Expr;
+    property:Expr;
+    computed:boolean;
+}
 
 export interface ObjectLiteral extends Expr{
     kind:"ObjectLiteral";

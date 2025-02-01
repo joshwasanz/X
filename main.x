@@ -13,3 +13,7 @@ const obj = {
 
 let f = object.complex.bar;
 foo = obj.foo + 5
+
+let timeNow = time();
+
+print(timeNow)
